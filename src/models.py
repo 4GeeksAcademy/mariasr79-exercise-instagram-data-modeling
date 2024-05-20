@@ -1,10 +1,10 @@
-import enum
 import os
 import sys
 import sqlalchemy
 import eralchemy2
-from sqlalchemy import Column, ForeignKey, Integer, String # type: ignore
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum # type: ignore
 from sqlalchemy.orm import relationship, declarative_base # type: ignore
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine # type: ignore
 from eralchemy2 import render_er # type: ignore
 
@@ -27,7 +27,7 @@ class Follower(Base):
 class Media(Base):
      __tablename__ = 'media'
      Id = Column(Integer, primary_key = True)
-     Type = Column(enum('image', 'video', 'audio', name='media_types'))
+     Type = Column(Enum('image', 'video', 'audio', name='media_types'))
      Url = Column(String(20), nullable = False, unique = True)
      PostId = Column(Integer,ForeignKey("post.Id"))   
 
