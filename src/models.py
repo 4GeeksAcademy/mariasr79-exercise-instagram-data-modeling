@@ -15,46 +15,70 @@ class User(Base):
      Id = Column(Integer, primary_key = True)
      UserName = Column(String(20), nullable = False, unique = True)
      Email = Column(String(20), nullable = False, unique = True)
+     character_fav = relationship("Character_fav", back_populates="user")
+     planet_fav = relationship("Planet_fav", back_populates="user")
+     starship_fav = relationship("Starship_fav", back_populates="user")
 
-class Follower(Base):
-     __tablename__ = 'follower'
-     Id = Column(Integer, primary_key= True)
-     UserFromId = Column(Integer, ForeignKey("user.Id"))
-     UserToId = Column(Integer, ForeignKey("user.Id"))
-     UserFrom = relationship("User", foreign_keys=[UserFromId])
-     UserTo = relationship("User", foreign_keys=[UserToId])
 
-class Media(Base):
-     __tablename__ = 'media'
-     Id = Column(Integer, primary_key = True)
-     Type = Column(Enum('image', 'video', 'audio', name='media_types'))
-     Url = Column(String(20), nullable = False, unique = True)
-     PostId = Column(Integer,ForeignKey("post.Id"))   
+     class Character(Base):
+      __tablename__ = "Character"
+     id = Column(Integer, primary_key=True)
+     name =  Column(String(250), nullable=False)
+     height = Column(float, nullable=False)
+     mass = Column(float, nullable=False)
+     hair_color = Column(String(250), nullable=False)
+     skin_color = Column(String(250), nullable=False)
+     character_fav = relationship("Character_fav", back_populates="character")
 
-class Post(Base):
-     __tablename__ = 'post'
-     Id = Column(Integer, primary_key= True)
-     UserId = Column(Integer, ForeignKey("user.Id"))
-     User = relationship("User")
-     Media = relationship("Media", backref="post")
+
+     class Character_fav(Base):
+      __tablename__ = "Character_fav"
+     id = Column(Integer, primary_key=True)
+     user_id = Column(Integer, ForeignKey("User.id"))
+     character_id = Column(Integer, ForeignKey("Character.id"))
+     user = relationship("User", back_populates="character_fav")
+     character = relationship("Character", back_populates="character_fav")
+
      
 
-class Comment(Base):
-     __tablename__ = 'comment'
-     Id = Column(Integer, primary_key= True)
-     CommentText = Column(String(20), nullable = False, unique = True)
-     AuthorId = Column(Integer, ForeignKey("user.Id"))
-     PostId = Column(Integer,ForeignKey("post.Id")) 
-     Post = relationship("Post")
-     User = relationship("User")
+class Planet(Base):
+    __tablename__ = "Planet"
+    id = Column(Integer, primary_key=True)
+    name =  Column(String(250), nullable=False)
+    population = Column(Integer, nullable=False)
+    terrain = Column(String(250), nullable=False)
+    climate = Column(String(250), nullable=False)   
+    planet_fav = relationship("Planet_fav", back_populates="planet")
+
+class Planet_fav(Base):
+    __tablename__ = "Planet_fav"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("User.id"))
+    planet_id = Column(Integer, ForeignKey("Planet.id"))
+    user = relationship("User", back_populates="planet_fav")
+    planet = relationship("Planet", back_populates="planet_fav")
+
+
+
+class Starship(Base):
+    __tablename__ = "Starship"
+    id = Column(Integer, primary_key=True)
+    name =  Column(String(250), nullable=False)
+    model = Column(String(250), nullable=False)
+    manufacturer = Column(String(250), nullable=False)
+    cargo_capacity = Column(Integer, nullable=False)     
+    starship_fav = relationship("Starship_fav", back_populates="starship")
+
+class Starship_fav(Base):
+    __tablename__ = "Starship_fav"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("User.id"))
+    starship_id = Column(Integer, ForeignKey("Starship.id"))
+    user = relationship("User", back_populates="starship_fav")
+    starship = relationship("Starship", back_populates="starship_fav")
 
 
 
 
 ## Draw from SQLAlchemy base
-try:
-    result = render_er(Base, 'diagram.png')
-    print("Success! Check the diagram.png file")
-except Exception as e:
-    print("There was a problem genering the diagram")
-    raise e
+render_er(Base, "diagram.png")
